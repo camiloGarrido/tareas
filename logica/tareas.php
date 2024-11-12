@@ -10,6 +10,7 @@ $input = file_get_contents("php://input");
 $data = json_decode($input, true); 
 $idPost = isset( $data['save']) ?  $data['save'] : 0;
 
+//Codigo guardar
 if($idPost != 0){
   
   if($idPost==1){
@@ -36,6 +37,75 @@ if($idPost != 0){
 
   die();
 }
+
+
+//Codigo actualizar
+
+$idPost = isset( $data['update']) ?  $data['update'] : 0;
+
+if($idPost != 0){
+  $id = isset( $data['id']) ?  $data['id'] : "-";
+  if($idPost == 1){
+    $nombre = isset( $data['nombre']) ?  $data['nombre'] : "-";
+    $descripcion = isset( $data['descripcion']) ?  $data['descripcion'] : "-";
+    $sql = "UPDATE `tarea` SET `Nombre`=?,`descripcion`=? WHERE id = ?";
+
+    $stmt = $conn->prepare($sql);
+
+    if ($stmt === false) {
+        echo "Error en la preparación de la consulta: " . $conn->error;
+    } else {
+        $stmt->bind_param("ssi", $nombre, $descripcion,$id);
+
+        if ($stmt->execute()) {
+          echo json_encode(array("message" => 200));
+        } else {
+          echo json_encode(array("message" => $stmt->error));
+        }
+    }
+
+    $stmt->close();
+  }else  if($idPost == -1){
+    $sql = "UPDATE `tarea` SET estado = 0 WHERE id = ?";
+
+    $stmt = $conn->prepare($sql);
+
+    if ($stmt === false) {
+        echo "Error en la preparación de la consulta: " . $conn->error;
+    } else {
+        $stmt->bind_param("i", $id);
+
+        if ($stmt->execute()) {
+          echo json_encode(array("message" => 200));
+        } else {
+          echo json_encode(array("message" => $stmt->error));
+        }
+    }
+
+    $stmt->close();
+  }else  if($idPost == 2){
+    $sql = "UPDATE `tarea` SET estado = 2 WHERE id = ?";
+
+    $stmt = $conn->prepare($sql);
+
+    if ($stmt === false) {
+        echo "Error en la preparación de la consulta: " . $conn->error;
+    } else {
+        $stmt->bind_param("i", $id);
+
+        if ($stmt->execute()) {
+          echo json_encode(array("message" => 200));
+        } else {
+          echo json_encode(array("message" => $stmt->error));
+        }
+    }
+  }
+  die();
+}
+
+
+
+
 
 //$stmt = $conn->prepare("SELECT * FROM `tarea` WHERE id = ?");
 //$stmt->bind_param("i", $id);

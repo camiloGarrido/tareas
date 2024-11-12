@@ -68,7 +68,10 @@ include "seguridad/config.php"
     </div>
     <div class="row mt-5">
         <div class="col-12" >
-                <h2 class="p-3 bg-secondary-subtle border-opacity-10 rounded shadow-sm  text-secondary text-center" >Listado </h2>
+          <h2 class="p-3 bg-secondary-subtle border-opacity-10 rounded shadow-sm  text-secondary text-center" >
+            Listado 
+          </h2>
+          <div id="liveAlertPlaceholder2" class="pb-3"></div>
         </div>
         <div class="col-12 mt-4 mb-4">
 
@@ -95,6 +98,35 @@ include "seguridad/config.php"
         </div>
     </div>
 </div>
+
+<div class="modal fade" id="exampleModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h1 class="modal-title fs-5" id="exampleModalLabel">Actualizar tarea</h1>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+      
+        <input type="hidden" class="form-control" id="Uid">
+      <div class="mb-3">
+        <label for="UNombre" class="form-label">Actualizar nombre</label>
+        <input type="text" class="form-control" id="UNombre" >
+      </div>
+      <div class="mb-3">
+        <label for="UDescripcion" class="form-label">Actualizar descripción</label>
+        <input type="text" class="form-control" id="UDescripcion">
+      </div>
+
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+        <button type="button" class="btn btn-warning" onclick="update()">Actualizar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
     <script src="js/shadow.js"></script>

@@ -1,4 +1,6 @@
+const myModal = new bootstrap.Modal("#exampleModal", {});
 const alertPlaceholder = document.getElementById("liveAlertPlaceholder");
+const alertPlaceholder2 = document.getElementById("liveAlertPlaceholder2");
 const appendAlert = (message, type) => {
   const wrapper = document.createElement("div");
   wrapper.innerHTML = [
@@ -10,6 +12,17 @@ const appendAlert = (message, type) => {
 
   alertPlaceholder.append(wrapper);
 };
+const appendAlert2 = (message, type) => {
+  const wrapper = document.createElement("div");
+  wrapper.innerHTML = [
+    `<div class="alert alert-${type} alert-dismissible" role="alert">`,
+    `   <div>${message}</div>`,
+    '   <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>',
+    "</div>",
+  ].join("");
+
+  alertPlaceholder2.append(wrapper);
+};
 
 function obtenerInformacion() {
   fetch("logica/tareas.php")
@@ -20,8 +33,6 @@ function obtenerInformacion() {
       return response.json(); // Convertir la respuesta a JSON
     })
     .then((data) => {
-      console.log(data);
-
       if (data.length > 0) {
         completarTabla(data);
       } else {
@@ -80,12 +91,78 @@ function completarTabla(data) {
         </td>
         <td class="text-center" >
             <div class="btn-group" role="group" >
-                <button type="button" class="btn btn-success">Completar</button>
-                <button type="button" class="btn btn-warning">Editar</button>
-                <button type="button" class="btn btn-danger">Eliminar</button>
+                <button type="button" class="btn btn-success" onclick="updateEstado(${item.id},2)">Completar</button>
+                <button type="button" class="btn btn-warning" 
+                onclick="editData('${item.Nombre}','${item.descripcion}',${item.id}) " >Editar</button>
+                <button type="button" class="btn btn-danger" onclick="updateEstado(${item.id},-1)" >Eliminar</button>
             </div>    
         </td>
     </tr>`;
   }
   document.getElementById("contenidoTabla").innerHTML = string;
 }
+
+function editData(nombre, descripcion, id) {
+  document.getElementById("Uid").value = id;
+  document.getElementById("UNombre").value = nombre;
+  document.getElementById("UDescripcion").value = descripcion;
+
+  myModal.show();
+}
+function update() {
+  const id = document.getElementById("Uid").value;
+  const nombre = document.getElementById("UNombre").value;
+  const descripcion = document.getElementById("UDescripcion").value;
+  let data = { id, descripcion, nombre, update: 1 };
+
+  var url = "logica/tareas.php";
+  fetch(url, {
+    method: "POST", // or 'PUT'
+    body: JSON.stringify(data), // data can be `string` or {object}!
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .catch((error) => console.error("Error:", error))
+    .then((response) => {
+      if (response.message == 200) {
+        appendAlert2("Se actualizo la tarea", "success");
+        myModal.hide();
+        obtenerInformacion();
+      } else {
+        appendAlert2("No se actualizo la tarea", "error");
+      }
+    });
+}
+
+function updateEstado(id, estado) {
+  let data = { id, update: estado };
+
+  var url = "logica/tareas.php";
+  fetch(url, {
+    method: "POST", // or 'PUT'
+    body: JSON.stringify(data), // data can be `string` or {object}!
+    headers: {
+      "Content-Type": "application/json",
+    },
+  })
+    .then((res) => res.json())
+    .catch((error) => console.error("Error:", error))
+    .then((response) => {
+      if (response.message == 200) {
+        if (estado == 2) {
+          appendAlert2("Se Completo la tarea", "info");
+        } else {
+          appendAlert2("Se Elimino la tarea", "danger");
+        }
+
+        myModal.hide();
+        obtenerInformacion();
+      } else {
+        appendAlert2("No se actualizo la tarea", "error");
+      }
+    });
+}
+
+obtenerInformacion();
